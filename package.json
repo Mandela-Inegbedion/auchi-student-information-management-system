@@ -1,0 +1,20 @@
+{
+  "name": "auchi-polytechnic-student-information-management-system",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "management_backend",
+    "management_frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names backend,frontend --prefix-colors green,cyan \"npm run dev --workspace management_backend\" \"npm run dev --workspace management_frontend -- --host 127.0.0.1\"",
+    "build": "npm run build --workspace management_backend && npm run build --workspace management_frontend",
+    "prisma:generate": "npm run prisma:generate --workspace management_backend",
+    "prisma:migrate": "npm run prisma:migrate --workspace management_backend",
+    "prisma:seed": "npm run prisma:seed --workspace management_backend",
+    "prisma:verify": "npm run prisma:verify --workspace management_backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

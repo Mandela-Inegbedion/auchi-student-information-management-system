@@ -1,0 +1,706 @@
+We are building a final-year project titled:
+
+"Design and Implementation of a Secure Student Information Management System (A Case Study of Auchi Polytechnic)."
+
+You are Codex working inside VS Code.
+
+Build the project using this exact stack:
+
+Frontend:
+
+- React
+- TypeScript
+- Tailwind CSS
+
+Backend:
+
+- Node.js
+- Express.js
+- TypeScript
+
+ORM:
+
+- Prisma
+
+Database:
+
+- PostgreSQL hosted on Supabase
+
+Architecture:
+Presentation Layer → React + TypeScript + Tailwind CSS
+Application Layer → Node.js + Express + Prisma
+Database Layer → PostgreSQL/Supabase
+
+Do NOT use PHP, MySQL, XAMPP, Laravel, Django, MongoDB, Firebase, or Next.js.
+
+First inspect the current workspace before changing anything.
+
+If the workspace is empty, create a clean full-stack project structure:
+
+/client
+/server
+
+The client should contain the React application.
+
+The server should contain the Express API.
+
+Use TypeScript throughout the frontend and backend.
+
+Configure Tailwind CSS.
+
+Configure Prisma in the server.
+
+Create environment variable support using .env and .env.example.
+
+Do not hard-code secrets.
+
+Create a simple backend health-check endpoint:
+
+GET /api/health
+
+It should return a simple JSON response confirming that the API is running.
+
+Create a basic React page that confirms the frontend is running.
+
+Do NOT build authentication, students, dashboard, or other modules yet.
+
+After completing this task:
+
+1. Test the frontend.
+2. Test the backend.
+3. Test /api/health.
+4. Report what was created and any errors. Now implement the database layer.
+
+Use Prisma ORM with PostgreSQL hosted on Supabase.
+
+Create the Prisma schema for the Secure Student Information Management System.
+
+The core entities are:
+
+1. User
+2. Student
+3. Department
+4. Programme
+5. AcademicRecord
+6. ActivityLog
+
+Use proper primary keys, foreign keys, relationships, unique constraints, timestamps, and appropriate indexes.
+
+User should contain appropriate fields including:
+
+- id
+- fullName
+- email
+- passwordHash
+- role
+- status
+- createdAt
+- updatedAt
+
+Roles should support at least:
+
+- ADMIN
+- STAFF
+
+Department:
+
+- id
+- name
+- code
+- description
+- createdAt
+- updatedAt
+
+Programme:
+
+- id
+- departmentId
+- name
+- code
+- description
+- createdAt
+- updatedAt
+
+Student:
+
+- id
+- matricNumber
+- firstName
+- middleName
+- lastName
+- gender
+- dateOfBirth
+- email
+- phone
+- address
+- departmentId
+- programmeId
+- admissionYear
+- status
+- createdAt
+- updatedAt
+
+AcademicRecord:
+
+- id
+- studentId
+- session
+- semester
+- courseCode
+- courseTitle
+- creditUnit
+- score
+- grade
+- gradePoint
+- createdAt
+- updatedAt
+
+ActivityLog:
+
+- id
+- userId
+- action
+- module
+- recordId
+- description
+- createdAt
+
+Maintain proper relationships:
+
+Department → Programmes
+Department → Students
+Programme → Students
+Student → AcademicRecords
+User → ActivityLogs
+
+Create the Prisma migration.
+
+Create a seed file containing:
+
+- 1 admin user
+- 1 staff user
+- several departments
+- several programmes
+- several students
+- sample academic records
+
+Passwords must be securely hashed.
+
+Do not expose password hashes.
+
+After implementation, run the Prisma validation/migration/seed process and report any errors. Now implement authentication.
+
+Use the existing React frontend and Express/Prisma backend.
+
+Implement secure authentication using:
+
+- Email/password
+- bcrypt or bcryptjs for password hashing
+- JWT authentication
+- Express authentication middleware
+- Protected API routes
+
+Create these endpoints:
+
+POST /api/auth/login
+GET /api/auth/me
+POST /api/auth/logout
+
+Login must:
+
+1. Validate the email and password.
+2. Find the user in PostgreSQL through Prisma.
+3. Verify the password hash.
+4. Check that the account is active.
+5. Generate a JWT.
+6. Return the authenticated user's safe information.
+
+Never return passwordHash to the frontend.
+
+Create a React login page with:
+
+- Email field
+- Password field
+- Login button
+- Validation
+- Loading state
+- Error messages
+
+Create frontend authentication state/context.
+
+After successful login, redirect the user to the dashboard.
+
+Unauthenticated users must not access protected application pages.
+
+Implement logout.
+
+Do not build the student management module yet.
+
+Test the complete login flow using the seeded admin and staff accounts.
+
+Report any errors after testing. Now implement role-based access control.
+
+The system currently supports:
+
+ADMIN
+STAFF
+
+Create reusable backend authorization middleware.
+
+Authentication and authorization must be different:
+
+Authentication determines who the user is.
+
+Authorization determines what the user is allowed to do.
+
+ADMIN permissions:
+
+- Dashboard
+- Students
+- Academic Records
+- Departments
+- Programmes
+- Users
+- Reports
+- Activity Logs
+
+STAFF permissions:
+
+- Dashboard
+- Students
+- Academic Records
+
+Staff must not access:
+
+- User management
+- Activity logs
+- Administrative management functions
+
+Do NOT rely only on hiding frontend buttons.
+
+Every protected backend endpoint must verify the user's role.
+
+Update the React sidebar/navigation so users only see pages they are authorized to access.
+
+Also protect the frontend routes.
+
+Test both ADMIN and STAFF accounts.
+
+Specifically verify that a STAFF user cannot access administrator API endpoints even if they manually enter the URL.
+
+Report the results. Now build the main authenticated application layout and dashboard.
+
+Create a professional institutional administrative interface for Auchi Polytechnic.
+
+Design style:
+
+- Clean
+- Modern
+- Professional
+- Academic
+- Minimal
+- Trustworthy
+- Responsive
+
+Do not make it look like an e-commerce site, social media application, gaming site, or flashy startup.
+
+Create:
+
+1. Sidebar
+2. Top header
+3. Main content area
+4. Responsive mobile navigation
+
+Sidebar items:
+
+ADMIN:
+
+- Dashboard
+- Students
+- Academic Records
+- Departments
+- Programmes
+- Users
+- Reports
+- Activity Logs
+- Logout
+
+STAFF:
+
+- Dashboard
+- Students
+- Academic Records
+- Logout
+
+Use Tailwind CSS.
+
+Create dashboard cards showing real database information:
+
+- Total Students
+- Total Departments
+- Total Programmes
+- Total Users
+
+Also display:
+
+- Recent student registrations
+- Recent activity
+
+Do not permanently hard-code statistics.
+
+Create clean reusable components for:
+
+- Cards
+- Tables
+- Buttons
+- Forms
+- Alerts
+- Loading states
+- Empty states
+
+Keep the design consistent across the application.
+
+Do not implement student CRUD yet. Now implement the complete Student Management module.
+
+Use the existing Prisma Student model and Express API.
+
+Backend:
+
+Create:
+
+GET /api/students
+GET /api/students/:id
+POST /api/students
+PUT /api/students/:id
+DELETE /api/students/:id
+
+Implement:
+
+- Search by student name
+- Search by matriculation number
+- Filter by department
+- Filter by programme
+- Filter by status
+- Pagination
+
+Validate all incoming data on the backend.
+
+Matriculation number must be unique.
+
+Only authorized users can perform student operations.
+
+Frontend:
+
+Create:
+
+Students page
+Student registration page/form
+Student profile/details page
+Edit student form
+Delete confirmation
+
+The student form should include:
+
+- Matric number
+- First name
+- Middle name
+- Last name
+- Gender
+- Date of birth
+- Email
+- Phone
+- Address
+- Department
+- Programme
+- Admission year
+- Status
+
+Use proper loading, error, success and empty states.
+
+On the student profile page show:
+
+- Personal information
+- Department
+- Programme
+- Admission year
+- Status
+- Academic records
+
+Do not break authentication, authorization, or the existing dashboard layout. Now implement Department and Programme management.
+
+Departments:
+
+GET /api/departments
+GET /api/departments/:id
+POST /api/departments
+PUT /api/departments/:id
+DELETE /api/departments/:id
+
+Programmes:
+
+GET /api/programmes
+GET /api/programmes/:id
+POST /api/programmes
+PUT /api/programmes/:id
+DELETE /api/programmes/:id
+
+Only ADMIN users should manage departments and programmes.
+
+Create professional frontend pages for:
+
+- Department list
+- Add department
+- Edit department
+- Programme list
+- Add programme
+- Edit programme
+
+Programmes must belong to departments.
+
+When registering/editing a student, the programme dropdown should be filtered according to the selected department.
+
+Prevent unsafe deletion when related student/programme records depend on the record.
+
+Use confirmation dialogs for destructive actions.
+
+Do not break existing modules. Now implement Academic Record management.
+
+Backend endpoints:
+
+GET /api/academic-records
+GET /api/academic-records/:id
+POST /api/academic-records
+PUT /api/academic-records/:id
+DELETE /api/academic-records/:id
+
+Academic records belong to students.
+
+Fields:
+
+- Student
+- Session
+- Semester
+- Course code
+- Course title
+- Credit unit
+- Score
+- Grade
+- Grade point
+
+Validate:
+
+- Student must exist.
+- Score must be within a valid range.
+- Credit unit must be valid.
+- Session and semester are required.
+
+Create frontend pages for:
+
+- Academic records list
+- Add academic record
+- Edit academic record
+
+Also show academic records inside the student's profile.
+
+Respect ADMIN/STAFF authorization.
+
+Do not break existing authentication, dashboard, student, department, or programme functionality. Now implement User Management.
+
+Only ADMIN users can access this module.
+
+Backend:
+
+GET /api/users
+POST /api/users
+PUT /api/users/:id
+PATCH /api/users/:id/status
+
+Administrators should be able to:
+
+- View users
+- Create users
+- Edit users
+- Assign ADMIN or STAFF role
+- Activate/deactivate users
+
+Create a professional User Management page.
+
+Never display password hashes.
+
+When creating a user:
+
+- Validate email.
+- Validate full name.
+- Validate role.
+- Hash the password before storing it.
+
+Prevent unauthorized users from accessing these endpoints.
+
+Add confirmation when deactivating a user.
+
+Do not allow a STAFF user to access user management, even by manually entering the URL or API endpoint. Now implement the Activity/Audit Log system.
+
+This is an important security feature of the project.
+
+Automatically log important actions performed by authenticated users.
+
+At minimum log:
+
+- Login
+- Logout
+- Student creation
+- Student update
+- Student deletion
+- Academic record creation
+- Academic record update
+- User creation
+- User update
+- Role changes
+- Department changes
+- Programme changes
+
+Each log should contain:
+
+- User
+- Action
+- Module
+- Record ID where applicable
+- Description
+- Timestamp
+
+Create an ADMIN-only Activity Logs page.
+
+The page should support:
+
+- Search
+- Filtering
+- Pagination
+- Date ordering
+
+Do not allow STAFF users to view activity logs.
+
+Integrate logging into the existing backend controllers/services rather than creating fake log entries from the frontend.
+
+Verify that actions actually create database records in activity_logs. Now implement the Reports module.
+
+Only authorized users should access reports.
+
+Create reports for:
+
+1. Student list
+2. Students by department
+3. Students by programme
+4. Student status summary
+5. Academic records
+
+Reports should use real PostgreSQL data.
+
+Provide useful filters such as:
+
+- Department
+- Programme
+- Status
+- Academic session
+
+Create a clean report interface.
+
+Make reports printer-friendly.
+
+Do not hard-code report data.
+
+Make sure reports respect role-based authorization. Now perform a complete testing and security review of the application.
+
+Do not add unnecessary new features.
+
+Test:
+
+AUTHENTICATION
+
+- Valid login
+- Invalid login
+- Logout
+- Expired/invalid token
+- Protected routes
+
+AUTHORIZATION
+
+- ADMIN permissions
+- STAFF permissions
+- Direct URL access
+- Direct API access
+
+STUDENTS
+
+- Create
+- Read
+- Update
+- Delete
+- Search
+- Filtering
+- Pagination
+- Validation
+
+DEPARTMENTS
+
+- CRUD
+- Relationships
+
+PROGRAMMES
+
+- CRUD
+- Department relationship
+
+ACADEMIC RECORDS
+
+- CRUD
+- Student relationship
+- Validation
+
+USERS
+
+- Creation
+- Role assignment
+- Activation/deactivation
+
+ACTIVITY LOGS
+
+- Verify important actions are recorded.
+- Verify STAFF cannot view logs.
+
+REPORTS
+
+- Verify data comes from the database.
+- Verify authorization.
+
+SECURITY REVIEW
+Check for:
+
+- Exposed secrets
+- Password exposure
+- Missing authorization checks
+- Unsafe database queries
+- Missing validation
+- Broken foreign-key relationships
+- Insecure token handling
+- Sensitive error messages
+
+Also check the UI for:
+
+- Broken layouts
+- Missing loading states
+- Missing empty states
+- Poor error messages
+- Mobile responsiveness
+
+Fix genuine issues you discover.
+
+Do not claim something is fixed unless you actually test it.
+
+At the end, provide a concise final report of:
+
+- What works
+- What was tested
+- Any remaining issues
+- How to run the project
+- Required environment variables
+- How to connect the Supabase database

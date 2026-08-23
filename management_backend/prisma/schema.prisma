@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum StudentStatus {
+  ACTIVE
+  GRADUATED
+  SUSPENDED
+  WITHDRAWN
+}
+
+enum Semester {
+  FIRST
+  SECOND
+}
+
+model User {
+  id           String        @id @default(uuid()) @db.Uuid
+  fullName     String        @map("full_name") @db.VarChar(150)
+  email        String        @unique @db.VarChar(255)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  role         UserRole      @default(STAFF)
+  status       UserStatus    @default(ACTIVE)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  activityLogs ActivityLog[]
+
+  @@index([role, status])
+  @@map("users")
+}
+
+model Department {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String      @unique @db.VarChar(150)
+  code        String      @unique @db.VarChar(20)
+  description String?     @db.Text
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  programmes  Programme[]
+  students    Student[]
+
+  @@map("departments")
+}
+
+model Programme {
+  id           String     @id @default(uuid()) @db.Uuid
+  departmentId String     @map("department_id") @db.Uuid
+  name         String     @db.VarChar(150)
+  code         String     @unique @db.VarChar(30)
+  description  String?    @db.Text
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  students     Student[]
+
+  @@unique([departmentId, name])
+  @@index([departmentId])
+  @@map("programmes")
+}
+
+model Student {
+  id              String           @id @default(uuid()) @db.Uuid
+  matricNumber    String           @unique @map("matric_number") @db.VarChar(50)
+  firstName       String           @map("first_name") @db.VarChar(100)
+  middleName      String?          @map("middle_name") @db.VarChar(100)
+  lastName        String           @map("last_name") @db.VarChar(100)
+  gender          Gender
+  dateOfBirth     DateTime         @map("date_of_birth") @db.Date
+  email           String?          @unique @db.VarChar(255)
+  phone           String?          @db.VarChar(30)
+  address         String?          @db.Text
+  departmentId    String           @map("department_id") @db.Uuid
+  programmeId     String           @map("programme_id") @db.Uuid
+  admissionYear   Int              @map("admission_year") @db.SmallInt
+  status          StudentStatus    @default(ACTIVE)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  department      Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  programme       Programme        @relation(fields: [programmeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  academicRecords AcademicRecord[]
+
+  @@index([firstName, lastName])
+  @@index([departmentId, programmeId])
+  @@index([status])
+  @@index([admissionYear])
+  @@map("students")
+}
+
+model AcademicRecord {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  session     String   @db.VarChar(20)
+  semester    Semester
+  courseCode  String   @map("course_code") @db.VarChar(30)
+  courseTitle String   @map("course_title") @db.VarChar(200)
+  creditUnit  Int      @map("credit_unit") @db.SmallInt
+  score       Decimal  @db.Decimal(5, 2)
+  grade       String   @db.VarChar(5)
+  gradePoint  Decimal  @map("grade_point") @db.Decimal(3, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([studentId, session, semester, courseCode], name: "student_course_session_semester")
+  @@index([studentId])
+  @@index([session, semester])
+  @@map("academic_records")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  action      String   @db.VarChar(100)
+  module      String   @db.VarChar(100)
+  recordId    String?  @map("record_id") @db.Uuid
+  description String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([module, action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
