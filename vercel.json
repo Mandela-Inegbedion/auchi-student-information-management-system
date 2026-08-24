@@ -5,6 +5,10 @@
   "outputDirectory": "management_frontend/dist",
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://auchi-student-information-management.onrender.com/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
