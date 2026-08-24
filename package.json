@@ -2,6 +2,9 @@
   "name": "auchi-polytechnic-student-information-management-system",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "workspaces": [
     "management_backend",
     "management_frontend"
