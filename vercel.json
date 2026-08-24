@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build:vercel --workspace management_frontend",
+  "installCommand": "npm ci --prefix management_frontend",
+  "buildCommand": "npm run build:vercel --prefix management_frontend",
   "outputDirectory": "management_frontend/dist",
   "rewrites": [
     {
