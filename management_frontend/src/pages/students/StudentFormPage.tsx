@@ -189,7 +189,7 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
           <CardHeader title="Personal information" description="Identity and biographical details for the student record." />
           <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
             <FormField label="Matric number" htmlFor="matricNumber" error={fieldErrors.matricNumber} hint={selectedDepartment ? `Format: ${selectedDepartment.code}/ followed by 10 digits.` : undefined}>
-              <TextInput id="matricNumber" value={form.matricNumber} onChange={(event) => updateMatricNumber(event.target.value)} placeholder={selectedDepartment ? `${selectedDepartment.code}/6252400567` : 'e.g. CS/1234567890'} disabled={isSubmitting} />
+              <TextInput id="matricNumber" value={form.matricNumber} onChange={(event) => updateMatricNumber(event.target.value)} placeholder={selectedDepartment ? `${selectedDepartment.code}/6252400567` : ''} disabled={isSubmitting} />
             </FormField>
             <FormField label="First name" htmlFor="firstName" error={fieldErrors.firstName}>
               <TextInput id="firstName" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} disabled={isSubmitting} />
