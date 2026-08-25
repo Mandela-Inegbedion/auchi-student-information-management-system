@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { hash } from 'bcryptjs';
 import type { RequestHandler, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { logActivity } from '../services/activity-log.service.js';
@@ -94,7 +95,7 @@ export const listStudents: RequestHandler = async (request, response) => {
     response.status(200).json({
       success: true,
       data: {
-        students,
+        students: students.map(({ passwordHash: _, ...s }) => s),
         pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
       },
     });
@@ -128,7 +129,7 @@ export const getStudent: RequestHandler = async (request, response) => {
   }
 
   try {
-    const student = await prisma.student.findUnique({
+    const studentRaw = await prisma.student.findUnique({
       where: { id: validation.data },
       include: {
         department: { select: { id: true, name: true, code: true } },
@@ -137,12 +138,13 @@ export const getStudent: RequestHandler = async (request, response) => {
       },
     });
 
-    if (!student) {
+    if (!studentRaw) {
       response.status(404).json({ success: false, message: 'Student record not found.' });
       return;
     }
 
-    response.status(200).json({ success: true, data: { student } });
+    const { passwordHash, ...student } = studentRaw;
+    response.status(200).json({ success: true, data: { student: { ...student, hasPortalAccess: passwordHash !== null } } });
   } catch (error) {
     databaseError(response, error);
   }
@@ -166,13 +168,14 @@ export const createStudent: RequestHandler = async (request, response) => {
       return;
     }
 
-    const student = await prisma.student.create({
-      data: studentData(validation.data),
+    const studentRaw = await prisma.student.create({
+      data: { ...studentData(validation.data), passwordHash: await hash(validation.data.matricNumber, 12) },
       include: {
         department: { select: { id: true, name: true, code: true } },
         programme: { select: { id: true, name: true, code: true } },
       },
     });
+    const { passwordHash: _, ...student } = studentRaw;
     await logActivity({ userId: request.auth?.userId, action: 'STUDENT_CREATED', module: 'STUDENTS', recordId: student.id, description: `Registered student ${student.matricNumber}.` });
     response.status(201).json({ success: true, message: 'Student registered successfully.', data: { student } });
   } catch (error) {
@@ -209,7 +212,7 @@ export const updateStudent: RequestHandler = async (request, response) => {
       return;
     }
 
-    const student = await prisma.student.update({
+    const studentRaw = await prisma.student.update({
       where: { id: idValidation.data },
       data: studentData(bodyValidation.data),
       include: {
@@ -217,6 +220,7 @@ export const updateStudent: RequestHandler = async (request, response) => {
         programme: { select: { id: true, name: true, code: true } },
       },
     });
+    const { passwordHash: _, ...student } = studentRaw;
     await logActivity({ userId: request.auth?.userId, action: 'STUDENT_UPDATED', module: 'STUDENTS', recordId: student.id, description: `Updated student ${student.matricNumber}.` });
     response.status(200).json({ success: true, message: 'Student updated successfully.', data: { student } });
   } catch (error) {
@@ -240,6 +244,29 @@ export const deleteStudent: RequestHandler = async (request, response) => {
     await prisma.student.delete({ where: { id: validation.data } });
     await logActivity({ userId: request.auth?.userId, action: 'STUDENT_DELETED', module: 'STUDENTS', recordId: existing.id, description: `Deleted student ${existing.matricNumber}.` });
     response.status(200).json({ success: true, message: 'Student deleted successfully.' });
+  } catch (error) {
+    databaseError(response, error);
+  }
+};
+
+export const resetStudentPortalPassword: RequestHandler = async (request, response) => {
+  const validation = studentIdSchema.safeParse(request.params.id);
+  if (!validation.success) {
+    validationError(response, validation.error.issues[0]?.message ?? 'Invalid student identifier.');
+    return;
+  }
+
+  try {
+    const student = await prisma.student.findUnique({ where: { id: validation.data }, select: { id: true, matricNumber: true } });
+    if (!student) {
+      response.status(404).json({ success: false, message: 'Student record not found.' });
+      return;
+    }
+
+    const newHash = await hash(student.matricNumber, 12);
+    await prisma.student.update({ where: { id: student.id }, data: { passwordHash: newHash } });
+    await logActivity({ userId: request.auth?.userId, action: 'STUDENT_PORTAL_PASSWORD_RESET', module: 'STUDENTS', recordId: student.id, description: `Reset portal password for student ${student.matricNumber}.` });
+    response.status(200).json({ success: true, message: `Portal password reset. Student can now log in with their matric number as the password.` });
   } catch (error) {
     databaseError(response, error);
   }

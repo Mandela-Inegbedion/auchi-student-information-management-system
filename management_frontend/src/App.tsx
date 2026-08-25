@@ -3,6 +3,8 @@ import { FullPageLoader } from './components/FullPageLoader';
 import { AuthenticatedLayout } from './components/AuthenticatedLayout';
 import { PermissionRoute } from './components/PermissionRoute';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { StudentPortalLayout } from './components/StudentPortalLayout';
+import { StudentProtectedRoute } from './components/StudentProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
@@ -19,6 +21,11 @@ import { AcademicRecordsPage } from './pages/academic-records/AcademicRecordsPag
 import { UsersPage } from './pages/users/UsersPage';
 import { ActivityLogsPage } from './pages/activity-logs/ActivityLogsPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
+import { SettingsPage } from './pages/settings/SettingsPage';
+import { StudentLoginPage } from './pages/student-portal/StudentLoginPage';
+import { StudentPortalPage } from './pages/student-portal/StudentPortalPage';
+import { StudentPortalEditPage } from './pages/student-portal/StudentPortalEditPage';
+import { StudentReportsPage } from './pages/student-portal/StudentReportsPage';
 
 function RootRedirect() {
   const { user, isLoading } = useAuth();
@@ -31,6 +38,7 @@ function App() {
     <Routes>
       <Route path="/" element={<RootRedirect />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/student/login" element={<StudentLoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AuthenticatedLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -66,6 +74,16 @@ function App() {
           <Route element={<PermissionRoute permission="viewActivityLogs" />}>
             <Route path="/activity-logs" element={<ActivityLogsPage />} />
           </Route>
+          <Route element={<PermissionRoute permission="manageSettings" />}>
+            <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
+      </Route>
+      <Route element={<StudentProtectedRoute />}>
+        <Route element={<StudentPortalLayout />}>
+          <Route path="/student/portal" element={<StudentPortalPage />} />
+          <Route path="/student/portal/edit" element={<StudentPortalEditPage />} />
+          <Route path="/student/portal/reports" element={<StudentReportsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

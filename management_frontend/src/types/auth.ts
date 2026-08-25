@@ -14,3 +14,15 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
+
+export interface StudentAuthUser {
+  id: string;
+  matricNumber: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface StudentLoginCredentials {
+  matricNumber: string;
+  password: string;
+}

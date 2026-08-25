@@ -1,5 +1,6 @@
 export type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 export type StudentStatus = 'ACTIVE' | 'GRADUATED' | 'SUSPENDED' | 'WITHDRAWN';
+export type StudentLevel = 'ND1' | 'ND2' | 'HND1' | 'HND2';
 export type Semester = 'FIRST' | 'SECOND';
 
 export interface DepartmentOption {
@@ -68,7 +69,9 @@ export interface Student {
   departmentId: string;
   programmeId: string;
   admissionYear: number;
+  level: StudentLevel;
   status: StudentStatus;
+  hasPortalAccess?: boolean;
   createdAt: string;
   updatedAt: string;
   department: { id: string; name: string; code: string };
@@ -90,6 +93,7 @@ export interface StudentPayload {
   departmentId: string;
   programmeId: string;
   admissionYear: string;
+  level: StudentLevel | '';
   status: StudentStatus;
 }
 

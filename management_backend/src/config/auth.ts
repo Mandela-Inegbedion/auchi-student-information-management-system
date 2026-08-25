@@ -1,6 +1,7 @@
 import type { CookieOptions } from 'express';
 
 export const AUTH_COOKIE_NAME = 'sims_auth';
+export const STUDENT_AUTH_COOKIE_NAME = 'sims_student_auth';
 export const JWT_ISSUER = 'auchi-polytechnic-sims';
 export const JWT_AUDIENCE = 'auchi-polytechnic-sims-web';
 
@@ -36,6 +37,21 @@ export const authCookieOptions: CookieOptions = {
 };
 
 export const clearAuthCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/',
+};
+
+export const studentAuthCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  path: '/',
+  maxAge: jwtExpiresInSeconds * 1000,
+};
+
+export const clearStudentAuthCookieOptions: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax',

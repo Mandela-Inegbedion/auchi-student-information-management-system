@@ -1,4 +1,4 @@
-import { Gender, StudentStatus } from '@prisma/client';
+import { Gender, StudentLevel, StudentStatus } from '@prisma/client';
 import { z } from 'zod';
 
 const emptyToUndefined = (value: unknown) =>
@@ -36,6 +36,7 @@ export const studentBodySchema = z.object({
   departmentId: z.string().uuid('Select a valid department.'),
   programmeId: z.string().uuid('Select a valid programme.'),
   admissionYear: z.coerce.number().int().min(1950).max(new Date().getFullYear() + 1),
+  level: z.nativeEnum(StudentLevel, { message: 'Select a valid level.' }),
   status: z.nativeEnum(StudentStatus),
 });
 

@@ -7,6 +7,9 @@ declare global {
         userId: string;
         role: UserRole;
       };
+      studentAuth?: {
+        studentId: string;
+      };
     }
   }
 }

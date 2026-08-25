@@ -6,6 +6,7 @@ import {
   getStudent,
   getStudentFormOptions,
   listStudents,
+  resetStudentPortalPassword,
   updateStudent,
 } from '../controllers/student.controller.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -20,5 +21,6 @@ router.get('/:id', getStudent);
 router.post('/', createStudent);
 router.put('/:id', updateStudent);
 router.delete('/:id', deleteStudent);
+router.post('/:id/reset-portal-password', resetStudentPortalPassword);
 
 export default router;

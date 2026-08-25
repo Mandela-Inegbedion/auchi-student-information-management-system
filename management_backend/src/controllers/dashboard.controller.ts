@@ -12,7 +12,7 @@ export const getDashboard: RequestHandler = async (request, response) => {
     const activityWhere = request.auth.role === UserRole.ADMIN ? undefined : { userId: request.auth.userId };
 
     const [totalStudents, totalDepartments, totalProgrammes, totalUsers, recentStudents, recentActivity] =
-      await prisma.$transaction([
+      await Promise.all([
         prisma.student.count(),
         prisma.department.count(),
         prisma.programme.count(),

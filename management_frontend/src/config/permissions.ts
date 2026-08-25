@@ -6,6 +6,7 @@ import {
   GraduationCap,
   ScrollText,
   School,
+  Settings,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -19,7 +20,8 @@ export type Permission =
   | 'manageProgrammes'
   | 'manageUsers'
   | 'viewReports'
-  | 'viewActivityLogs';
+  | 'viewActivityLogs'
+  | 'manageSettings';
 
 const rolePermissions: Record<UserRole, ReadonlySet<Permission>> = {
   ADMIN: new Set<Permission>([
@@ -31,6 +33,7 @@ const rolePermissions: Record<UserRole, ReadonlySet<Permission>> = {
     'manageUsers',
     'viewReports',
     'viewActivityLogs',
+    'manageSettings',
   ]),
   STAFF: new Set<Permission>(['viewDashboard', 'manageStudents', 'manageAcademicRecords']),
 };
@@ -55,4 +58,5 @@ export const navigationItems: NavigationItem[] = [
   { label: 'Users', path: '/users', permission: 'manageUsers', icon: Users },
   { label: 'Reports', path: '/reports', permission: 'viewReports', icon: FileBarChart2 },
   { label: 'Activity Logs', path: '/activity-logs', permission: 'viewActivityLogs', icon: ScrollText },
+  { label: 'Settings', path: '/settings', permission: 'manageSettings', icon: Settings },
 ];

@@ -5,12 +5,15 @@ import express from 'express';
 import authRoutes from './routes/auth.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import studentRoutes from './routes/student.routes.js';
+import studentAuthRoutes from './routes/student-auth.routes.js';
+import studentProfileRoutes from './routes/student-profile.routes.js';
 import departmentRoutes from './routes/department.routes.js';
 import programmeRoutes from './routes/programme.routes.js';
 import academicRecordRoutes from './routes/academic-record.routes.js';
 import userRoutes from './routes/user.routes.js';
 import activityLogRoutes from './routes/activity-log.routes.js';
 import reportRoutes from './routes/report.routes.js';
+import settingsRoutes from './routes/settings.routes.js';
 
 const app = express();
 
@@ -45,12 +48,15 @@ app.get('/api/health', (_request, response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/student/auth', studentAuthRoutes);
+app.use('/api/student/profile', studentProfileRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/programmes', programmeRoutes);
 app.use('/api/academic-records', academicRecordRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activity-logs', activityLogRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingsRoutes);
 
 app.use((error: unknown, _request: express.Request, response: express.Response, _next: express.NextFunction) => {
   const requestError = error as { type?: string; status?: number };

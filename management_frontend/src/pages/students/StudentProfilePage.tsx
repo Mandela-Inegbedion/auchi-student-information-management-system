@@ -21,11 +21,13 @@ const academicColumns: TableColumn<AcademicRecord>[] = [
   { key: 'point', header: 'Point', render: (record) => Number(record.gradePoint).toFixed(2) },
 ];
 
-function Detail({ label, value }: { label: string; value: string | number | null | undefined }) {
+function Detail({ label, value, truncate }: { label: string; value: string | number | null | undefined; truncate?: boolean }) {
   return (
-    <div>
+    <div className="min-w-0">
       <dt className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</dt>
-      <dd className="mt-2 text-sm font-semibold text-slate-900">{value || 'Not provided'}</dd>
+      <dd className={`mt-2 text-sm font-semibold text-slate-900 ${truncate ? 'truncate' : ''}`} title={truncate && value ? String(value) : undefined}>
+        {value || 'Not provided'}
+      </dd>
     </div>
   );
 }
@@ -116,7 +118,7 @@ export function StudentProfilePage() {
         </div>
 
         <div className="grid gap-5 p-6 sm:grid-cols-2 lg:grid-cols-4 sm:p-8">
-          <div className="flex gap-3"><Mail className="mt-0.5 h-4 w-4 text-emerald-700" /><Detail label="Email" value={student.email} /></div>
+          <div className="flex min-w-0 gap-3"><Mail className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" /><div className="min-w-0"><Detail label="Email" value={student.email} truncate /></div></div>
           <div className="flex gap-3"><Phone className="mt-0.5 h-4 w-4 text-emerald-700" /><Detail label="Phone" value={student.phone} /></div>
           <div className="flex gap-3"><CalendarDays className="mt-0.5 h-4 w-4 text-emerald-700" /><Detail label="Date of birth" value={dateFormatter.format(new Date(student.dateOfBirth))} /></div>
           <div className="flex gap-3"><MapPin className="mt-0.5 h-4 w-4 text-emerald-700" /><Detail label="Address" value={student.address} /></div>
@@ -142,6 +144,7 @@ export function StudentProfilePage() {
             <Detail label="Department" value={`${student.department.name} (${student.department.code})`} />
             <Detail label="Programme" value={`${student.programme.name} (${student.programme.code})`} />
             <Detail label="Admission year" value={student.admissionYear} />
+            <Detail label="Level" value={student.level} />
             <Detail label="Academic records" value={student.academicRecords?.length ?? 0} />
           </dl>
         </Card>

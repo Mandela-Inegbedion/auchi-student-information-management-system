@@ -7,7 +7,7 @@ import { Card, CardHeader } from '../../components/ui/Card';
 import { FormField, SelectInput, TextArea, TextInput } from '../../components/ui/FormField';
 import { LoadingState } from '../../components/ui/LoadingState';
 import { ApiError, apiRequest } from '../../lib/api';
-import type { DepartmentOption, Student, StudentPayload } from '../../types/student';
+import type { DepartmentOption, Student, StudentLevel, StudentPayload } from '../../types/student';
 
 const emptyForm: StudentPayload = {
   matricNumber: '',
@@ -22,6 +22,7 @@ const emptyForm: StudentPayload = {
   departmentId: '',
   programmeId: '',
   admissionYear: String(new Date().getFullYear()),
+  level: '',
   status: 'ACTIVE',
 };
 
@@ -63,6 +64,7 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
             departmentId: student.departmentId,
             programmeId: student.programmeId,
             admissionYear: String(student.admissionYear),
+            level: student.level,
             status: student.status,
           });
         }
@@ -94,10 +96,13 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
   }
 
   function updateMatricNumber(value: string) {
-    if (!selectedDepartment) return;
-    const suffixInput = value.includes('/') ? value.slice(value.indexOf('/') + 1) : value;
-    const suffix = suffixInput.replace(/\D/g, '').slice(0, 10);
-    updateField('matricNumber', `${selectedDepartment.code}/${suffix}`);
+    if (selectedDepartment) {
+      const suffixInput = value.includes('/') ? value.slice(value.indexOf('/') + 1) : value;
+      const suffix = suffixInput.replace(/\D/g, '').slice(0, 10);
+      updateField('matricNumber', `${selectedDepartment.code}/${suffix}`);
+    } else {
+      updateField('matricNumber', value.toUpperCase());
+    }
   }
 
   function changeDepartment(departmentId: string) {
@@ -114,10 +119,12 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
 
   function validate() {
     const errors: FieldErrors = {};
-    if (!selectedDepartment) {
-      errors.matricNumber = 'Select a department before entering the matric number.';
-    } else if (!new RegExp(`^${selectedDepartment.code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/\\d{10}$`).test(form.matricNumber)) {
-      errors.matricNumber = `Use ${selectedDepartment.code}/ followed by exactly 10 digits.`;
+    if (selectedDepartment) {
+      if (!new RegExp(`^${selectedDepartment.code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/\\d{10}$`).test(form.matricNumber)) {
+        errors.matricNumber = `Use ${selectedDepartment.code}/ followed by exactly 10 digits.`;
+      }
+    } else if (!/^[A-Za-z0-9-]+\/\d{10}$/.test(form.matricNumber)) {
+      errors.matricNumber = 'Enter a valid matric number (e.g. CS/1234567890).';
     }
     if (form.firstName.trim().length < 2) errors.firstName = 'Enter the student’s first name.';
     if (form.lastName.trim().length < 2) errors.lastName = 'Enter the student’s last name.';
@@ -126,6 +133,7 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) errors.email = 'Enter a valid email address.';
     if (!form.departmentId) errors.departmentId = 'Select a department.';
     if (!form.programmeId) errors.programmeId = 'Select a programme.';
+    if (!form.level) errors.level = 'Select a level.';
     const year = Number(form.admissionYear);
     if (!Number.isInteger(year) || year < 1950 || year > new Date().getFullYear() + 1) {
       errors.admissionYear = 'Enter a valid admission year.';
@@ -180,8 +188,8 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
         <Card>
           <CardHeader title="Personal information" description="Identity and biographical details for the student record." />
           <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
-            <FormField label="Matric number" htmlFor="matricNumber" error={fieldErrors.matricNumber} hint={selectedDepartment ? `Format: ${selectedDepartment.code}/ followed by 10 digits.` : 'Select a department below to set the prefix.'}>
-              <TextInput id="matricNumber" inputMode="numeric" value={form.matricNumber} onChange={(event) => updateMatricNumber(event.target.value)} placeholder={selectedDepartment ? `${selectedDepartment.code}/6252400567` : 'Select a department first'} disabled={isSubmitting || !selectedDepartment} />
+            <FormField label="Matric number" htmlFor="matricNumber" error={fieldErrors.matricNumber} hint={selectedDepartment ? `Format: ${selectedDepartment.code}/ followed by 10 digits.` : undefined}>
+              <TextInput id="matricNumber" value={form.matricNumber} onChange={(event) => updateMatricNumber(event.target.value)} placeholder={selectedDepartment ? `${selectedDepartment.code}/6252400567` : 'e.g. CS/1234567890'} disabled={isSubmitting} />
             </FormField>
             <FormField label="First name" htmlFor="firstName" error={fieldErrors.firstName}>
               <TextInput id="firstName" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} disabled={isSubmitting} />
@@ -245,6 +253,15 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
             </FormField>
             <FormField label="Admission year" htmlFor="admissionYear" error={fieldErrors.admissionYear}>
               <TextInput id="admissionYear" type="number" min="1950" max={String(new Date().getFullYear() + 1)} value={form.admissionYear} onChange={(event) => updateField('admissionYear', event.target.value)} disabled={isSubmitting} />
+            </FormField>
+            <FormField label="Level" htmlFor="level" error={fieldErrors.level}>
+              <SelectInput id="level" value={form.level} onChange={(event) => updateField('level', event.target.value as StudentLevel)} disabled={isSubmitting}>
+                <option value="">Select level</option>
+                <option value="ND1">ND1</option>
+                <option value="ND2">ND2</option>
+                <option value="HND1">HND1</option>
+                <option value="HND2">HND2</option>
+              </SelectInput>
             </FormField>
             <FormField label="Status" htmlFor="status" error={fieldErrors.status}>
               <SelectInput id="status" value={form.status} onChange={(event) => updateField('status', event.target.value as StudentPayload['status'])} disabled={isSubmitting}>
