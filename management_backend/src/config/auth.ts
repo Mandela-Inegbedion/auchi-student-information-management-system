@@ -18,8 +18,8 @@ function readJwtSecret(): string {
 function readExpiryHours(): number {
   const hours = Number(process.env.JWT_EXPIRES_IN_HOURS ?? 8);
 
-  if (!Number.isInteger(hours) || hours < 1 || hours > 24) {
-    throw new Error('JWT_EXPIRES_IN_HOURS must be an integer between 1 and 24.');
+  if (!Number.isInteger(hours) || hours < 1 || hours > 8760) {
+    throw new Error('JWT_EXPIRES_IN_HOURS must be an integer between 1 and 8760.');
   }
 
   return hours;
