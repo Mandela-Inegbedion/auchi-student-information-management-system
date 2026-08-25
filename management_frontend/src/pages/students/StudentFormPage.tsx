@@ -83,15 +83,42 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
     () => departments.find((department) => department.id === form.departmentId)?.programmes ?? [],
     [departments, form.departmentId],
   );
+  const selectedDepartment = useMemo(
+    () => departments.find((department) => department.id === form.departmentId),
+    [departments, form.departmentId],
+  );
 
   function updateField<K extends keyof StudentPayload>(field: K, value: StudentPayload[K]) {
     setForm((current) => ({ ...current, [field]: value }));
     setFieldErrors((current) => ({ ...current, [field]: undefined }));
   }
 
+  function updateMatricNumber(value: string) {
+    if (!selectedDepartment) return;
+    const suffixInput = value.includes('/') ? value.slice(value.indexOf('/') + 1) : value;
+    const suffix = suffixInput.replace(/\D/g, '').slice(0, 10);
+    updateField('matricNumber', `${selectedDepartment.code}/${suffix}`);
+  }
+
+  function changeDepartment(departmentId: string) {
+    const department = departments.find((item) => item.id === departmentId);
+    const suffix = form.matricNumber.split('/').at(-1)?.replace(/\D/g, '').slice(0, 10) ?? '';
+    setForm((current) => ({
+      ...current,
+      departmentId,
+      programmeId: '',
+      matricNumber: department ? `${department.code}/${suffix}` : '',
+    }));
+    setFieldErrors((current) => ({ ...current, departmentId: undefined, programmeId: undefined, matricNumber: undefined }));
+  }
+
   function validate() {
     const errors: FieldErrors = {};
-    if (!form.matricNumber.trim()) errors.matricNumber = 'Matric number is required.';
+    if (!selectedDepartment) {
+      errors.matricNumber = 'Select a department before entering the matric number.';
+    } else if (!new RegExp(`^${selectedDepartment.code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\/\\d{10}$`).test(form.matricNumber)) {
+      errors.matricNumber = `Use ${selectedDepartment.code}/ followed by exactly 10 digits.`;
+    }
     if (form.firstName.trim().length < 2) errors.firstName = 'Enter the student’s first name.';
     if (form.lastName.trim().length < 2) errors.lastName = 'Enter the student’s last name.';
     if (!form.gender) errors.gender = 'Select a gender.';
@@ -153,8 +180,8 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
         <Card>
           <CardHeader title="Personal information" description="Identity and biographical details for the student record." />
           <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
-            <FormField label="Matric number" htmlFor="matricNumber" error={fieldErrors.matricNumber}>
-              <TextInput id="matricNumber" value={form.matricNumber} onChange={(event) => updateField('matricNumber', event.target.value)} placeholder="AU/ICT/2026/001" disabled={isSubmitting} />
+            <FormField label="Matric number" htmlFor="matricNumber" error={fieldErrors.matricNumber} hint={selectedDepartment ? `Format: ${selectedDepartment.code}/ followed by 10 digits.` : 'Select a department below to set the prefix.'}>
+              <TextInput id="matricNumber" inputMode="numeric" value={form.matricNumber} onChange={(event) => updateMatricNumber(event.target.value)} placeholder={selectedDepartment ? `${selectedDepartment.code}/6252400567` : 'Select a department first'} disabled={isSubmitting || !selectedDepartment} />
             </FormField>
             <FormField label="First name" htmlFor="firstName" error={fieldErrors.firstName}>
               <TextInput id="firstName" value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} disabled={isSubmitting} />
@@ -203,10 +230,7 @@ export function StudentFormPage({ mode }: { mode: 'create' | 'edit' }) {
               <SelectInput
                 id="departmentId"
                 value={form.departmentId}
-                onChange={(event) => {
-                  updateField('departmentId', event.target.value);
-                  updateField('programmeId', '');
-                }}
+                onChange={(event) => changeDepartment(event.target.value)}
                 disabled={isSubmitting}
               >
                 <option value="">Select department</option>

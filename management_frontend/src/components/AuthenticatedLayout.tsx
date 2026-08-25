@@ -1,9 +1,25 @@
 import { LogOut, Menu, ShieldCheck, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { hasPermission, navigationItems } from '../config/permissions';
 import { useAuth } from '../context/AuthContext';
+import { prefetchApi } from '../lib/api';
 import { Button } from './ui/Button';
+
+const navigationPrefetchPaths: Record<string, string[]> = {
+  '/dashboard': ['/dashboard'],
+  '/students': ['/students/form-options', '/students?page=1&pageSize=10'],
+  '/academic-records': ['/academic-records/form-options', '/academic-records?page=1&pageSize=10'],
+  '/departments': ['/departments'],
+  '/programmes': ['/programmes', '/departments'],
+  '/users': ['/users'],
+  '/reports': ['/reports?'],
+  '/activity-logs': ['/users', '/activity-logs?page=1&pageSize=15&order=desc'],
+};
+
+function prefetchNavigation(path: string) {
+  navigationPrefetchPaths[path]?.forEach(prefetchApi);
+}
 
 export function AuthenticatedLayout() {
   const { user, logout } = useAuth();
@@ -20,6 +36,16 @@ export function AuthenticatedLayout() {
     month: 'long',
     year: 'numeric',
   }).format(new Date());
+
+  useEffect(() => {
+    if (!user) return undefined;
+    const permittedItems = navigationItems.filter((item) => hasPermission(user.role, item.permission));
+    const timers = permittedItems.map((item, index) => window.setTimeout(
+      () => prefetchNavigation(item.path),
+      500 + index * 200,
+    ));
+    return () => timers.forEach(window.clearTimeout);
+  }, [user]);
 
   async function handleLogout() {
     setIsSigningOut(true);
@@ -64,6 +90,9 @@ export function AuthenticatedLayout() {
               key={item.path}
               to={item.path}
               onClick={() => setIsMobileOpen(false)}
+              onMouseEnter={() => prefetchNavigation(item.path)}
+              onFocus={() => prefetchNavigation(item.path)}
+              onTouchStart={() => prefetchNavigation(item.path)}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
                   isActive ? 'bg-emerald-800 text-white shadow-sm' : 'text-emerald-100/90 hover:bg-emerald-900 hover:text-white'

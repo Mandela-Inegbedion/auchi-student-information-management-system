@@ -10,7 +10,11 @@ const optionalText = (maximum: number) =>
 const optionalUuid = z.preprocess(emptyToUndefined, z.string().uuid().optional());
 
 export const studentBodySchema = z.object({
-  matricNumber: z.string().trim().min(3).max(50).transform((value) => value.toUpperCase()),
+  matricNumber: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9-]+\/\d{10}$/, 'Use the department code followed by a slash and exactly 10 digits.')
+    .transform((value) => value.toUpperCase()),
   firstName: z.string().trim().min(2).max(100),
   middleName: optionalText(100),
   lastName: z.string().trim().min(2).max(100),

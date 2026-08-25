@@ -130,7 +130,7 @@ async function main() {
 
   const studentData = [
     {
-      matricNumber: 'AU/ICT/2024/001',
+      matricNumber: 'ICT/6252400567',
       firstName: 'Ada',
       middleName: 'Ivie',
       lastName: 'Osagie',
@@ -145,7 +145,7 @@ async function main() {
       status: StudentStatus.ACTIVE,
     },
     {
-      matricNumber: 'AU/ENG/2023/014',
+      matricNumber: 'ENG/6252400568',
       firstName: 'Daniel',
       middleName: null,
       lastName: 'Okoh',
@@ -160,7 +160,7 @@ async function main() {
       status: StudentStatus.ACTIVE,
     },
     {
-      matricNumber: 'AU/SCI/2024/008',
+      matricNumber: 'SCI/6252400569',
       firstName: 'Grace',
       middleName: 'Efe',
       lastName: 'Akpata',
@@ -175,7 +175,7 @@ async function main() {
       status: StudentStatus.ACTIVE,
     },
     {
-      matricNumber: 'AU/BUS/2023/021',
+      matricNumber: 'BUS/6252400570',
       firstName: 'Samuel',
       middleName: 'Ose',
       lastName: 'Eromosele',
@@ -208,12 +208,12 @@ async function main() {
   }
 
   const academicRecordData = [
-    { matricNumber: 'AU/ICT/2024/001', courseCode: 'COM 111', courseTitle: 'Introduction to Computing', creditUnit: 3, score: '78', grade: 'A', gradePoint: '4.00' },
-    { matricNumber: 'AU/ICT/2024/001', courseCode: 'MTH 111', courseTitle: 'Logic and Linear Algebra', creditUnit: 2, score: '71', grade: 'A', gradePoint: '4.00' },
-    { matricNumber: 'AU/ENG/2023/014', courseCode: 'EEC 213', courseTitle: 'Electrical Circuit Theory', creditUnit: 3, score: '65', grade: 'B', gradePoint: '3.00' },
-    { matricNumber: 'AU/ENG/2023/014', courseCode: 'MEC 211', courseTitle: 'Engineering Mechanics', creditUnit: 2, score: '59', grade: 'C', gradePoint: '2.00' },
-    { matricNumber: 'AU/SCI/2024/008', courseCode: 'STA 111', courseTitle: 'Descriptive Statistics', creditUnit: 3, score: '74', grade: 'A', gradePoint: '4.00' },
-    { matricNumber: 'AU/BUS/2023/021', courseCode: 'BAM 211', courseTitle: 'Principles of Management', creditUnit: 3, score: '68', grade: 'B', gradePoint: '3.00' },
+    { matricNumber: 'ICT/6252400567', courseCode: 'COM 111', courseTitle: 'Introduction to Computing', creditUnit: 3, score: '78', grade: 'A', gradePoint: '4.00' },
+    { matricNumber: 'ICT/6252400567', courseCode: 'MTH 111', courseTitle: 'Logic and Linear Algebra', creditUnit: 2, score: '71', grade: 'A', gradePoint: '4.00' },
+    { matricNumber: 'ENG/6252400568', courseCode: 'EEC 213', courseTitle: 'Electrical Circuit Theory', creditUnit: 3, score: '65', grade: 'B', gradePoint: '3.00' },
+    { matricNumber: 'ENG/6252400568', courseCode: 'MEC 211', courseTitle: 'Engineering Mechanics', creditUnit: 2, score: '59', grade: 'C', gradePoint: '2.00' },
+    { matricNumber: 'SCI/6252400569', courseCode: 'STA 111', courseTitle: 'Descriptive Statistics', creditUnit: 3, score: '74', grade: 'A', gradePoint: '4.00' },
+    { matricNumber: 'BUS/6252400570', courseCode: 'BAM 211', courseTitle: 'Principles of Management', creditUnit: 3, score: '68', grade: 'B', gradePoint: '3.00' },
   ];
 
   for (const record of academicRecordData) {

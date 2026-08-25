@@ -24,15 +24,18 @@ function studentData(data: StudentBody) {
   };
 }
 
-async function validateAcademicPlacement(departmentId: string, programmeId: string) {
+async function validateAcademicPlacement(departmentId: string, programmeId: string, matricNumber: string) {
   const [department, programme] = await Promise.all([
-    prisma.department.findUnique({ where: { id: departmentId }, select: { id: true } }),
+    prisma.department.findUnique({ where: { id: departmentId }, select: { id: true, code: true } }),
     prisma.programme.findUnique({ where: { id: programmeId }, select: { id: true, departmentId: true } }),
   ]);
 
   if (!department) return 'The selected department does not exist.';
   if (!programme) return 'The selected programme does not exist.';
   if (programme.departmentId !== departmentId) return 'The selected programme does not belong to this department.';
+  if (!matricNumber.startsWith(`${department.code}/`)) {
+    return `The matric number must begin with the selected department code: ${department.code}/`;
+  }
   return null;
 }
 
@@ -153,7 +156,11 @@ export const createStudent: RequestHandler = async (request, response) => {
   }
 
   try {
-    const placementError = await validateAcademicPlacement(validation.data.departmentId, validation.data.programmeId);
+    const placementError = await validateAcademicPlacement(
+      validation.data.departmentId,
+      validation.data.programmeId,
+      validation.data.matricNumber,
+    );
     if (placementError) {
       validationError(response, placementError);
       return;
@@ -192,7 +199,11 @@ export const updateStudent: RequestHandler = async (request, response) => {
       return;
     }
 
-    const placementError = await validateAcademicPlacement(bodyValidation.data.departmentId, bodyValidation.data.programmeId);
+    const placementError = await validateAcademicPlacement(
+      bodyValidation.data.departmentId,
+      bodyValidation.data.programmeId,
+      bodyValidation.data.matricNumber,
+    );
     if (placementError) {
       validationError(response, placementError);
       return;
