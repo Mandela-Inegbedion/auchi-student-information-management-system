@@ -1,6 +1,6 @@
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { FullPageLoader } from '../../components/FullPageLoader';
 import { useStudentAuth } from '../../context/StudentAuthContext';
 import { ApiError } from '../../lib/api';
@@ -16,6 +16,12 @@ export function StudentLoginPage() {
 
   if (isLoading) return <FullPageLoader />;
   if (student) return <Navigate to="/student/portal" replace />;
+
+  function fillDemoCredentials() {
+    setMatricNumber('ICT/6252400567');
+    setPassword('ICT/6252400567');
+    setError('');
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +76,7 @@ export function StudentLoginPage() {
                 autoComplete="username"
                 value={matricNumber}
                 onChange={(e) => setMatricNumber(e.target.value.toUpperCase())}
-                  placeholder="Matric number"
+                placeholder="Matric number"
                 disabled={isSubmitting}
                 className="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 disabled:bg-slate-50"
               />
@@ -99,7 +105,6 @@ export function StudentLoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="mt-1.5 text-xs text-slate-500">Default password is your matric number. Contact admin to reset.</p>
             </div>
 
             <button
@@ -109,15 +114,24 @@ export function StudentLoginPage() {
             >
               {isSubmitting ? 'Signing in…' : 'Sign in'}
             </button>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Demo access</p>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={fillDemoCredentials}
+                className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-left transition hover:border-emerald-300 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Ada Ivie Osagie</p>
+                  <p className="mt-0.5 text-xs text-slate-500">ICT/6252400567 · Computer Science</p>
+                </div>
+                <span className="ml-3 shrink-0 rounded-md bg-emerald-700 px-3 py-1 text-xs font-bold text-white">Fill →</span>
+              </button>
+            </div>
           </form>
         </div>
-
-        <p className="mt-6 text-center text-xs text-slate-500">
-          Staff or admin?{' '}
-          <Link to="/login" className="font-semibold text-emerald-700 hover:text-emerald-900">
-            Sign in here
-          </Link>
-        </p>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   FileBarChart2,
   Gauge,
   GraduationCap,
+  ShieldCheck,
   ScrollText,
   School,
   Settings,
@@ -21,7 +22,8 @@ export type Permission =
   | 'manageUsers'
   | 'viewReports'
   | 'viewActivityLogs'
-  | 'manageSettings';
+  | 'manageSettings'
+  | 'manageRolesPermissions';
 
 const rolePermissions: Record<UserRole, ReadonlySet<Permission>> = {
   ADMIN: new Set<Permission>([
@@ -34,6 +36,7 @@ const rolePermissions: Record<UserRole, ReadonlySet<Permission>> = {
     'viewReports',
     'viewActivityLogs',
     'manageSettings',
+    'manageRolesPermissions',
   ]),
   STAFF: new Set<Permission>(['viewDashboard', 'manageStudents', 'manageAcademicRecords']),
 };
@@ -59,4 +62,5 @@ export const navigationItems: NavigationItem[] = [
   { label: 'Reports', path: '/reports', permission: 'viewReports', icon: FileBarChart2 },
   { label: 'Activity Logs', path: '/activity-logs', permission: 'viewActivityLogs', icon: ScrollText },
   { label: 'Settings', path: '/settings', permission: 'manageSettings', icon: Settings },
+  { label: 'Roles & Permissions', path: '/roles-permissions', permission: 'manageRolesPermissions', icon: ShieldCheck },
 ];

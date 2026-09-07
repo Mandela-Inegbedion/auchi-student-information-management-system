@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { FullPageLoader } from './components/FullPageLoader';
+import { HomePage } from './pages/HomePage';
 import { AuthenticatedLayout } from './components/AuthenticatedLayout';
 import { PermissionRoute } from './components/PermissionRoute';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -22,6 +23,7 @@ import { UsersPage } from './pages/users/UsersPage';
 import { ActivityLogsPage } from './pages/activity-logs/ActivityLogsPage';
 import { ReportsPage } from './pages/reports/ReportsPage';
 import { SettingsPage } from './pages/settings/SettingsPage';
+import { RolesPermissionsPage } from './pages/roles-permissions/RolesPermissionsPage';
 import { StudentLoginPage } from './pages/student-portal/StudentLoginPage';
 import { StudentPortalPage } from './pages/student-portal/StudentPortalPage';
 import { StudentPortalEditPage } from './pages/student-portal/StudentPortalEditPage';
@@ -30,7 +32,7 @@ import { StudentReportsPage } from './pages/student-portal/StudentReportsPage';
 function RootRedirect() {
   const { user, isLoading } = useAuth();
   if (isLoading) return <FullPageLoader />;
-  return <Navigate to={user ? '/dashboard' : '/login'} replace />;
+  return user ? <Navigate to="/dashboard" replace /> : <HomePage />;
 }
 
 function App() {
@@ -76,6 +78,9 @@ function App() {
           </Route>
           <Route element={<PermissionRoute permission="manageSettings" />}>
             <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+          <Route element={<PermissionRoute permission="manageRolesPermissions" />}>
+            <Route path="/roles-permissions" element={<RolesPermissionsPage />} />
           </Route>
         </Route>
       </Route>
