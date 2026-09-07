@@ -1,4 +1,4 @@
-import { FileBarChart2, LogOut, ShieldCheck, UserRound } from 'lucide-react';
+import { FileBarChart2, LogOut, Menu, ShieldCheck, UserRound, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useStudentAuth } from '../context/StudentAuthContext';
@@ -8,6 +8,7 @@ export function StudentPortalLayout() {
   const { student, logout } = useStudentAuth();
   const navigate = useNavigate();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   async function handleLogout() {
     setIsSigningOut(true);
@@ -15,8 +16,65 @@ export function StudentPortalLayout() {
     navigate('/login', { replace: true });
   }
 
+  function closeMobileNavigation() {
+    setIsMobileOpen(false);
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 lg:grid lg:grid-cols-[272px_minmax(0,1fr)]">
+      {isMobileOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-slate-950/55 backdrop-blur-sm lg:hidden"
+          onClick={closeMobileNavigation}
+          aria-label="Close navigation"
+        />
+      )}
+
+      <aside className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-emerald-900 bg-emerald-950 text-white shadow-2xl transition-transform duration-200 lg:hidden ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between border-b border-emerald-900 px-5 py-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-800 text-emerald-50">
+              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">Auchi Polytechnic</p>
+              <p className="mt-1 text-sm font-bold text-white">Student Portal</p>
+            </div>
+          </div>
+          <button type="button" className="rounded-lg p-2 text-emerald-100 hover:bg-emerald-900" onClick={closeMobileNavigation} aria-label="Close navigation">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-5" aria-label="Student mobile navigation">
+          <NavLink to="/student/portal" end onClick={closeMobileNavigation} className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${isActive ? 'bg-emerald-800 text-white shadow-sm' : 'text-emerald-100/90 hover:bg-emerald-900 hover:text-white'}`}>
+            <UserRound className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+            My Profile
+          </NavLink>
+          <NavLink to="/student/portal/reports" onClick={closeMobileNavigation} className={({ isActive }) => `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${isActive ? 'bg-emerald-800 text-white shadow-sm' : 'text-emerald-100/90 hover:bg-emerald-900 hover:text-white'}`}>
+            <FileBarChart2 className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+            My Reports
+          </NavLink>
+        </nav>
+
+        <div className="border-t border-emerald-900 px-5 py-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-800 text-xs font-bold">
+              {student?.firstName?.[0]}{student?.lastName?.[0]}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{student?.firstName} {student?.lastName}</p>
+              <p className="mt-0.5 truncate text-xs text-emerald-300">{student?.matricNumber}</p>
+            </div>
+          </div>
+          <Button type="button" onClick={() => void handleLogout()} isLoading={isSigningOut} variant="ghost" className="mt-4 w-full border border-emerald-800 text-emerald-50 hover:bg-emerald-900 focus:ring-emerald-800">
+            {!isSigningOut && <LogOut className="h-4 w-4" aria-hidden="true" />}
+            Logout
+          </Button>
+        </div>
+      </aside>
+
       <aside className="fixed inset-y-0 left-0 z-50 hidden w-72 flex-col border-r border-emerald-900 bg-emerald-950 text-white shadow-2xl lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-auto lg:shadow-none">
         <div className="flex items-center gap-3 border-b border-emerald-900 px-6 py-6">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-800 text-emerald-50">
@@ -79,9 +137,14 @@ export function StudentPortalLayout() {
 
       <div className="min-w-0">
         <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between border-b border-slate-200 bg-white/95 px-5 backdrop-blur sm:px-8">
-          <div>
+          <div className="flex items-center gap-3">
+            <button type="button" className="rounded-lg border border-slate-200 p-2 text-slate-700 hover:bg-slate-50 lg:hidden" onClick={() => setIsMobileOpen(true)} aria-label="Open navigation">
+              <Menu className="h-5 w-5" />
+            </button>
+            <div>
             <p className="text-sm font-bold text-slate-950 sm:text-base">Student Portal</p>
             <p className="hidden text-xs text-slate-500 sm:block">{student?.matricNumber}</p>
+            </div>
           </div>
           <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">STUDENT</span>
         </header>
